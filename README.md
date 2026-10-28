@@ -1,261 +1,111 @@
 # Work
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sort It! Waste Game</title>
-
-  <style>
-    body {
-      margin: 0;
-      padding: 30px;
-      background: #e8f5e9;
-      color: #20352a;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    main {
-      max-width: 850px;
-      margin: auto;
-      padding: 30px;
-      border-radius: 20px;
-      background: white;
-      box-shadow: 0 8px 25px #0002;
-    }
-
-    h1 {
-      margin-bottom: 5px;
-      font-size: 3rem;
-    }
-
-    .score {
-      margin: 20px 0;
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
-    #item-card {
-      width: 230px;
-      min-height: 170px;
-      margin: 25px auto;
-      padding: 20px;
-      border: 3px dashed #6c9275;
-      border-radius: 18px;
-      background: #fffdf5;
-      cursor: grab;
-      display: grid;
-      place-content: center;
-      gap: 10px;
-      font-size: 1.2rem;
-    }
-
-    #item-card span {
-      font-size: 4rem;
-    }
-
-    #message {
-      min-height: 25px;
-      font-weight: bold;
-    }
-
-    .bins {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      margin-top: 25px;
-    }
-
-    .bin {
-      width: 180px;
-      min-height: 160px;
-      border: 0;
-      border-radius: 18px 18px 8px 8px;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .bin span {
-      display: block;
-      margin-bottom: 10px;
-      font-size: 3rem;
-    }
-
-    .organic { background: #3f8157; }
-    .recycling { background: #2879ad; }
-    .landfill { background: #5c5c5c; }
-
-    .bin:hover {
-      transform: translateY(-5px);
-      filter: brightness(1.1);
-    }
-
-    #reset-button {
-      margin-top: 30px;
-      padding: 10px 18px;
-      border: 0;
-      border-radius: 8px;
-      background: #f7bf4f;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    @media (max-width: 650px) {
-      .bins {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .bin {
-        width: 100%;
-        min-height: 100px;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<title>Sort It!</title>
+<style>
+body{background:#e7f4e8;color:#183238;font-family:"微软雅黑",Arial;padding-top:25px}
+#hezi{background:#fff;width:680px;margin:0 auto;padding:15px 10px 25px 10px;border-radius:10px}
+#kapian{width:200px;height:120px;margin:18px auto;padding-top:25px;border:3px dashed #649b72;background:#fffdf5;font-size:18px}
+#kapian span{display:block;font-size:50px;margin-bottom:5px}
+.lajitong{width:160px;height:110px;margin:5px;border:0;color:#fff;font-size:15px;font-weight:bold;cursor:pointer}
+.lajitong span{display:block;font-size:35px;margin-bottom:3px}
+#chonglai{margin-top:20px;padding:6px 14px;border:0;background:#f7bf4f;font-weight:bold;cursor:pointer}
+h1{margin:10px 0}
+.btn2{box-shadow:0 2px 6px #999}
+</style>
 </head>
-
 <body>
-  <main>
-    <h1>Sort It!</h1>
-    <p>Drag the rubbish into a bin, or click a bin to choose it.</p>
+<center>
+<div id="hezi">
+<h1>Sort It!</h1>
+<p>Drag the item to a bin, or click a bin to choose it.</p >
+<h2 id="fenshu">Score: 0 / 6</h2>
 
-    <p class="score">Score: <span id="score">0</span> / 6</p>
+<div id="kapian"></div>
 
-    <div id="item-card" draggable="true">
-      Loading...
-    </div>
+<p id="tishi"></p >
 
-    <p id="message"></p>
+<button class="lajitong" style="background:#3f8157" onclick="panduan('organic')" ondragover="allowDrop(event)" ondrop="drop(event,'organic')"><span>🍂</span>Organics</button>
 
-    <div class="bins">
-      <button class="bin organic" data-bin="organic">
-        <span>🍂</span>
-        Organics
-      </button>
+<button class="lajitong" style="background:#2879ad" onclick="panduan('recycling')" ondragover="allowDrop(event)" ondrop="drop(event,'recycling')"><span>♻️</span>Recycling</button>
 
-      <button class="bin recycling" data-bin="recycling">
-        <span>♻️</span>
-        Recycling
-      </button>
+<button class="lajitong" style="background:#5c5c5c" onclick="panduan('landfill')" ondragover="allowDrop(event)" ondrop="drop(event,'landfill')"><span>🗑️</span>Landfill</button>
 
-      <button class="bin landfill" data-bin="landfill">
-        <span>🗑️</span>
-        Landfill
-      </button>
-    </div>
+<br><br>
+<button id="chonglai" onclick="chonglai()">Restart game</button>
+</div>
+</center>
 
-    <button id="reset-button">Restart game</button>
-  </main>
+<script>
+//三个数组分别存名字、图片、类型，下标一样的就是同一个垃圾
+var names = ["Banana peel", "Apple core", "Aluminium can", "Plastic bottle", "Broken mug", "Chip packet"];
+var icons = ["🍌", "🍎", "🥫", "🧴", "☕", "🥔"];
+var types = ["organic", "organic", "recycling", "recycling", "landfill", "landfill"];
 
-  <script>
-    // Each object is one rubbish item in the game.
-    // Check local council rules before using these classifications in your assessment.
-    const rubbish = [
-      { name: "Banana peel", icon: "🍌", bin: "organic" },
-      { name: "Apple core", icon: "🍎", bin: "organic" },
-      { name: "Aluminium can", icon: "🥫", bin: "recycling" },
-      { name: "Plastic drink bottle", icon: "🧴", bin: "recycling" },
-      { name: "Broken ceramic mug", icon: "☕", bin: "landfill" },
-      { name: "Chip packet", icon: "🥔", bin: "landfill" }
-    ];
+var num = 0;
+var score = 0;
+var keyi = true;
 
-    // These variables track the current game.
-    let currentItem = 0;
-    let score = 0;
-    let locked = false;
+//原来是一个一个写 if(num==0)... 太长了，改成数组
+//var a1 = "Banana peel";
+//var a2 = "Apple core";
 
-    // Find the HTML elements that JavaScript will update.
-    const card = document.querySelector("#item-card");
-    const scoreText = document.querySelector("#score");
-    const message = document.querySelector("#message");
-    const bins = document.querySelectorAll(".bin");
-    const resetButton = document.querySelector("#reset-button");
+xianshi();
 
-    // Show the current rubbish item on the screen.
-    function showItem() {
-      locked = false;
-
-      // If every item has been sorted, end the game.
-      if (currentItem === rubbish.length) {
-        card.innerHTML = "<span>🏆</span><strong>Game complete!</strong>";
-        card.draggable = false;
-        message.textContent = "Well done! Press Restart game to play again.";
+function xianshi() {
+    var ka = document.getElementById("kapian");
+    if (num == names.length) {
+        ka.innerHTML = "<span>🏆</span>Game complete!";
+        ka.draggable = false;
+        document.getElementById("tishi").innerHTML = "Press Restart game to play again.";
         return;
-      }
-
-      const item = rubbish[currentItem];
-
-      card.innerHTML = `
-        <span>${item.icon}</span>
-        <strong>${item.name}</strong>
-      `;
-
-      card.draggable = true;
-      message.textContent = "Choose the correct bin.";
     }
+    ka.innerHTML = "<span>" + icons[num] + "</span>" + names[num];
+    ka.draggable = true;
+    document.getElementById("tishi").innerHTML = "Choose the correct bin.";
+    keyi = true;
+}
 
-    // Check whether the player's chosen bin is correct.
-    function chooseBin(chosenBin) {
-      // Stop double-clicking while the game changes to the next item.
-      if (locked || currentItem === rubbish.length) {
+function panduan(t) {
+    if (keyi == false) {
         return;
-      }
-
-      locked = true;
-
-      const item = rubbish[currentItem];
-
-      if (chosenBin === item.bin) {
-        score += 1;
-        scoreText.textContent = score;
-        message.textContent = "Correct! Well done.";
-
-        // Wait briefly, then show the next item.
-        setTimeout(() => {
-          currentItem += 1;
-          showItem();
+    }
+    if (num == names.length) {
+        return;
+    }
+    if (t == types[num]) {
+        keyi = false;
+        score = score + 1;
+        document.getElementById("fenshu").innerHTML = "Score: " + score + " / 6";
+        document.getElementById("tishi").innerHTML = "Correct!";
+        setTimeout(function() {
+            num = num + 1;
+            xianshi();
         }, 700);
-      } else {
-        message.textContent = "Not quite. Try another bin.";
-        locked = false;
-      }
+    } else {
+        document.getElementById("tishi").innerHTML = "Not quite. Try again.";
     }
+}
 
-    // Let the player drag the rubbish card.
-    card.addEventListener("dragstart", (event) => {
-      event.dataTransfer.setData("text/plain", "rubbish");
-    });
+//这两个是拖拽要用的，不写的话东西放不进去
+function allowDrop(ev) {
+    ev.preventDefault();
+}
 
-    // Add click and drop events to every bin.
-    bins.forEach((bin) => {
-      bin.addEventListener("click", () => {
-        chooseBin(bin.dataset.bin);
-      });
+function drop(ev, t) {
+    ev.preventDefault();
+    panduan(t);
+}
 
-      bin.addEventListener("dragover", (event) => {
-        event.preventDefault();
-      });
+function chonglai() {
+    location.reload();
+}
+</script>
 
-      bin.addEventListener("drop", (event) => {
-        event.preventDefault();
-        chooseBin(bin.dataset.bin);
-      });
-    });
-
-    // Restart the game.
-    resetButton.addEventListener("click", () => {
-      currentItem = 0;
-      score = 0;
-      scoreText.textContent = score;
-      showItem();
-    });
-
-    // Start the first game.
-    showItem();
+</body>
+</html>    showItem();
   </script>
 </body>
 </html>
